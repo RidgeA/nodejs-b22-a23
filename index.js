@@ -29,11 +29,31 @@ app.use(async (ctx, next) => {
 // "http://localhost:3000/user?name=Name&password=password"
 // all|get|post|put|del|delete|patch
 router.post("/user", async (ctx, next) => {
-  console.log(ctx.request.body)
-  return next();
-});
 
-router.post("/user", async (ctx, next) => {
+/*
+  const dataChunks = []
+  ctx.req.on("data", (chunk) => {
+    dataChunks.push(chunk);
+  });
+
+  ctx.req.on("end", () => {
+    const buffer = Buffer.concat(dataChunks);
+    const bodyString = buffer.toString()
+    console.log(bodyString);
+  })
+*/
+
+/*
+  const dataChunks = []
+  for await (const chunk of ctx.req) {
+    dataChunks.push(chunk);
+  }
+
+  const buffer = Buffer.concat(dataChunks);
+  const bodyString = buffer.toString()
+  const {name, password} = JSON.parse(bodyString)
+*/
+
   const { name, password } = ctx.request.body; // ctx.request.query
   await setTimeout(100);
   ctx.body = {
