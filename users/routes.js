@@ -1,12 +1,9 @@
-const { pbkdf2 } = require("node:crypto");
-const { promisify } = require("node:util");
 
 const Router = require("@koa/router");
 
 const { withUserId } = require("./middleware/with-user-id");
-
-const usersDB = [];
-const pbkdf2Promise = promisify(pbkdf2);
+const usersDB = require("./users_db")
+const auth = require("./auth/auth")
 
 const router = new Router();
 
@@ -21,12 +18,12 @@ router
   .post("/", async (ctx) => {
     const { name, password } = ctx.request.body;
 
-    const hash = await pbkdf2Promise(password, "salt", 100_000, 64, "sha512");
+    const hash = await auth.hash(password)
 
     const user = {
       id: usersDB.length,
       name,
-      password: hash.toString("hex"),
+      password: hash,
     };
 
     usersDB.push(user);

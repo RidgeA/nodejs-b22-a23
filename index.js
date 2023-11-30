@@ -13,7 +13,8 @@
 const Koa = require("koa");
 const Router = require("@koa/router");
 
-const { logger, cors, bodyParser } = require("./middleware");
+const config = require("./config");
+const { logger, cors, bodyParser, session } = require("./middleware");
 
 const user = require("./users");
 
@@ -23,8 +24,10 @@ const router = new Router();
 app.use(cors());
 app.use(bodyParser());
 app.use(logger());
+app.use(session(app));
 
 router.use("/users", user.routes.routes());
+router.use("/auth", user.authRoutes.routes());
 
 function delaySync(ms) {
   const start = Date.now();
@@ -33,18 +36,20 @@ function delaySync(ms) {
 }
 
 router.get("/test-blocking", async (ctx) => {
-  delaySync(1000)
+  delaySync(1000);
   ctx.body = "Hello";
 });
 
-const {setTimeout} = require("timers/promises")
+const { setTimeout } = require("timers/promises");
 router.get("/test-non-blocking", async (ctx) => {
-  await setTimeout(1000)
+  await setTimeout(1000);
   ctx.body = "Hello";
 });
 
 app.use(router.middleware());
 app.use(router.allowedMethods());
 
-app.listen(3000);
+app.listen(config.http.port, () => {
+  console.log(`Server started at port ${config.http.port}`);
+});
 
