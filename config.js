@@ -17,6 +17,17 @@ module.exports = {
       signed: true,
       secure: false,
       rolling: true,
+    },
+    jwt: {
+      cookieName: "auth",
+      secret: "secret",
+      algo: "HS512",
+      ttl: "5m",
+      cookieOptions: {
+        httpOnly: true,
+      },
+      refreshTokenCookieName: "refresh",
+      refreshTokenTTL: "1d",
     }
   }
 };

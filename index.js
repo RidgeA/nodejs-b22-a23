@@ -8,13 +8,14 @@
  * https://insomnia.rest/
  * https://www.youtube.com/watch?v=8aGhZQkoFbQ
  * http://latentflip.com/loupe/
+ * https://jwt.io/
  */
 
 const Koa = require("koa");
 const Router = require("@koa/router");
 
 const config = require("./config");
-const { logger, cors, bodyParser, session } = require("./middleware");
+const { logger, cors, bodyParser } = require("./middleware");
 
 const user = require("./users");
 
@@ -24,10 +25,12 @@ const router = new Router();
 app.use(cors());
 app.use(bodyParser());
 app.use(logger());
-app.use(session(app));
 
-router.use("/users", user.routes.routes());
 router.use("/auth", user.authRoutes.routes());
+
+router
+  .use(user.middleware.verifyToken)
+  .use("/users", user.routes.routes());
 
 function delaySync(ms) {
   const start = Date.now();

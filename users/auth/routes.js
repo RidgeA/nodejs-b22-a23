@@ -2,6 +2,8 @@ const Router = require("@koa/router");
 
 const usersDB = require("./../users_db");
 const auth = require("./auth");
+const { generateToken, refresh } = require("./jwt");
+const cfg = require("./../../config");
 
 const router = new Router();
 
@@ -21,19 +23,33 @@ router
     if (!await auth.verifyPassword(user, password)) {
       ctx.throw(401);
     }
-    ctx.session.userId = user.id;
+
+    const token = generateToken(user.id);
+
+    setAuthCookies(ctx, token);
+
+    ctx.body = user;
     ctx.status = 200;
   })
   .get("/me", (ctx) => {
     ctx.body = { userId: ctx.session.userId };
+
     ctx.status = 200;
   })
-  .get("/counter", ctx => {
-    if (!ctx.session.views) {
-      ctx.session.views = 1;
-    }
-    ctx.session.views++;
-    ctx.body = { views: ctx.session.views };
+  .post("/refresh", ctx => {
+    const refToken = ctx.cookies.get(cfg.auth.jwt.refreshTokenCookieName);
+
+    const token = refresh(refToken);
+
+    setAuthCookies(ctx, token);
+    ctx.status = 200;
   });
+
+function setAuthCookies(ctx, token) {
+  ctx.cookies.set(cfg.auth.jwt.cookieName, token.auth, cfg.auth.jwt.cookieOptions);
+  ctx.cookies.set(cfg.auth.jwt.refreshTokenCookieName, token.refresh, {
+    maxAge: token.maxAge,
+  });
+}
 
 module.exports = router;
