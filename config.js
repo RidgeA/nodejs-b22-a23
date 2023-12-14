@@ -28,6 +28,16 @@ module.exports = {
       },
       refreshTokenCookieName: "refresh",
       refreshTokenTTL: "1d",
+    },
+    oauth: {
+      github: {
+        url: "https://github.com/login/oauth/authorize",
+        redirectUri: "http://localhost:3000/oauth/github/callback",
+        tokenUrl: "https://github.com/login/oauth/access_token",
+        clientId: process.env.GITHUB_OAUTH_CLIENT_ID,
+        secret: process.env.GITHUB_OAUTH_CLIENT_SECRET,
+        scopes: "user:email"
+      }
     }
   }
 };

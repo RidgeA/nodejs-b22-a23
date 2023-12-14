@@ -27,6 +27,7 @@ app.use(bodyParser());
 app.use(logger());
 
 router.use("/auth", user.authRoutes.routes());
+router.use("/oauth", user.oauthRoutes.routes());
 
 router
   .use(user.middleware.verifyToken)
