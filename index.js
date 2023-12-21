@@ -9,6 +9,8 @@
  * https://www.youtube.com/watch?v=8aGhZQkoFbQ
  * http://latentflip.com/loupe/
  * https://jwt.io/
+ * https://www.postgresql.org/docs/14/index.html
+ * https://hub.docker.com/_/postgres
  */
 
 const Koa = require("koa");
